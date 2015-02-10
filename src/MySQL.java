@@ -18,11 +18,11 @@ public class MySQL {
 	
 	
 	
-	public List<String> getTableName(){
+	public List<String> getTableName(String database){
 		List<String> tables=new ArrayList<>();
 		
 		try {
-			PreparedStatement statement=link.con.prepareStatement("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='homework2'");
+			PreparedStatement statement=link.con.prepareStatement("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='"+database+"'");
             ResultSet result=statement.executeQuery();
 			
 			while(result.next()){
@@ -67,7 +67,10 @@ public class MySQL {
 			ResultSet result=statement.executeQuery();
 			
 			while(result.next()){
+				if(result.getString(1)!=null){
 				values.add(result.getString(1));
+				}
+				//System.out.println(result.getString(1));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

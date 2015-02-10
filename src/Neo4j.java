@@ -26,7 +26,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
 
 public class Neo4j {
 	
-	//static String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/Jie";
+	 //String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/test";
 	//GraphDatabaseService graphDataService=new GraphDatabaseFactory().newEmbeddedDatabase(Neo4j_Path);
 	//Transaction transction=graphDataService.beginTx();;
 	 ExecutionEngine engine;	
@@ -75,7 +75,7 @@ public class Neo4j {
 		
 	public Relationship createRel(Node first, Node second, String relType,GraphDatabaseService graphDataService){
 		  Relationship relation = null;
-		  try(Transaction transaction = graphDataService.beginTx();){
+		  try(Transaction transaction = graphDataService.beginTx()){
 			  
 			  ReadableIndex<Node> autoNodeIndex = graphDataService.index().getNodeAutoIndexer().getAutoIndex();
 			  //Node n = autoNodeIndex.get("name", "Neo").getSingle();
@@ -162,7 +162,8 @@ public class Neo4j {
 	 public Node createUniqueFactory( String name,String type, String label,GraphDatabaseService graphDataService )
 	    {
 	        // START SNIPPET: prepareUniqueFactory
-	        try ( Transaction tx = graphDataService.beginTx())
+		
+	        try( Transaction tx = graphDataService.beginTx())
 	        {
 	        	//indexa=graphDataService.index().forNodes(label);
 	            UniqueFactory<Node> result = new UniqueFactory.UniqueNodeFactory( graphDataService, label )
@@ -180,6 +181,8 @@ public class Neo4j {
 	            tx.success();
 	            Node node;
 	            node=result.getOrCreate("value", name);
+	            
+	            
 	           // node=result.getOrCreate("type", type);
 	            return node;
 	        }
@@ -229,6 +232,13 @@ public class Neo4j {
 	        }
 	        return rels;
 	    }
+	    
+	    void shutDown(GraphDatabaseService graphDb){
+			//shut down graphDataService
+			graphDb.shutdown();
+			System.out.println("Neo4j database is shutown");
+			
+		}
 	    
 	    
 	    

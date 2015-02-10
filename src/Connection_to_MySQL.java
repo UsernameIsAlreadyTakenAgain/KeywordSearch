@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class Connection_to_MySQL {
 	
-	static String host="jdbc:mysql://localhost/homework2";
+	static String host="jdbc:mysql://localhost/homework2?zeroDateTimeBehavior=convertToNull";
 	static String username="root";
 	static String password="root";
 	static Connection con;

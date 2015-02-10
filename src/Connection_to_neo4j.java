@@ -11,7 +11,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 public class Connection_to_neo4j {
 	
-	static String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/Jie";
+	static String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/test2";
 	Node first;
 	Node second;
 	Relationship relation;
@@ -28,9 +28,10 @@ public class Connection_to_neo4j {
 		graphDataService=new GraphDatabaseFactory().newEmbeddedDatabase(Neo4j_Path);
 		
 		//Begin Transaction
-		Transaction transction=graphDataService.beginTx();
 		
-		try{
+		
+		try(Transaction transction=graphDataService.beginTx();)
+		{
 			//Create nodes & Set properties 
 			first=graphDataService.createNode();
 			first.setProperty("name", "Jie");
@@ -55,7 +56,7 @@ public class Connection_to_neo4j {
 		}
 		finally{
 			//Finish the transaction
-			transction.finish();
+			//transction.finish();
 		}
 		
 		

@@ -19,11 +19,13 @@ import org.neo4j.graphdb.index.UniqueFactory;
 
 
 
+
+
 public class test_MySQL {
 
 	public static void main(String[] args) {
-	//String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/Jie";
-  String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/data";
+	String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/yeah";
+  //String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/data";
 
 		GraphDatabaseService graphDataService=new GraphDatabaseFactory().newEmbeddedDatabase(Neo4j_Path);
 		Transaction transction=graphDataService.beginTx();
@@ -35,7 +37,9 @@ public class test_MySQL {
 		
 		MySQL test=new MySQL();
 		
-		List<String> tables=test.getTableName();
+		String database="homework2";
+
+		List<String> tables=test.getTableName(database);
 		Map<String,List<String>> columns = new HashMap<String,List<String>>();
 		List<String> column=new ArrayList<String>();
 		List<String> value=new ArrayList<>();
@@ -44,6 +48,10 @@ public class test_MySQL {
 		List<Relationship> relation=new ArrayList<>();
 		
 		Neo4j neo=new Neo4j();
+		
+		//create node for database
+		Node data=neo.createUniqueFactory(database, "database", "Database",graphDataService);
+		
 		int n=0;
 		while(n<tables.size()){
 			//neo.createNode(tables.get(n), "table","Table");
@@ -51,7 +59,8 @@ public class test_MySQL {
 			//factory=neo.createUniqueFactory(tables.get(n), "table", "Table",graphDataService);
 			
 			//Node.add(neo.get(tables.get(n),  factory,graphDataService));
-			Node.add(neo.createUniqueFactory(tables.get(n), "table", "Table",graphDataService));
+			Node table=neo.createUniqueFactory(tables.get(n), "table", "Table",graphDataService);
+			relation.add(neo.createRel(table, data, "value-record", graphDataService));
 			//Node.add(neo.createNode(tables.get(n), "table","Table"));
 			//System.out.println(Node.get(n).getProperty("value").toString());
 			//System.out.println(Node.get(n).getProperty("type").toString());
@@ -77,7 +86,7 @@ public class test_MySQL {
 			//Node first=neo.createNode(val, "column","Column");
 			//Node second=Node.
 			//Node.add(first);
-			   Node.add(neo.createUniqueFactory(val, "column", "Column",graphDataService));
+			   //Node.add(neo.createUniqueFactory(val, "column", "Column",graphDataService));
 			   Node col=neo.createUniqueFactory(val, "column","Column",graphDataService);
 			   Node tab=neo.createUniqueFactory(key, "table","Table",graphDataService);
 			   relation.add(neo.createRel(col, tab, "column-table", graphDataService));
@@ -90,7 +99,7 @@ public class test_MySQL {
 			//relation.add(neo.createRel(first, second, relType))
 			
 			values=test.getValue(val, key);
-			//System.out.println(value);
+			//System.out.println(values);
 			
 			
 			
@@ -100,7 +109,7 @@ public class test_MySQL {
 				    //factory=neo.createUniqueFactory( "record", "Record",graphDataService);
 				    //Node.add(neo.get(values.get(k), factory,graphDataService)); 
 				//Node.add(neo.createNode(values.get(k), "value","Value"));
-				Node.add(neo.createUniqueFactory(values.get(k).toString(),"record", "Record",graphDataService));
+				//Node.add(neo.createUniqueFactory(values.get(k).toString(),"record", "Record",graphDataService));
 				
 				Node record=neo.createUniqueFactory(values.get(k), "record","Record",graphDataService);
 				relation.add(neo.createRel(record, col, "value-record", graphDataService));
@@ -113,7 +122,12 @@ public class test_MySQL {
 			//System.out.println(Node.get(n).getProperty("name").toString());
 			//System.out.println(Node.get(n).getProperty("type").toString());
 		   }
-		}	
+		}
+		
+		transction.success();
+		transction.close();
+		
+		neo.shutDown(graphDataService);
 		
 		/*int c=0,v=0;
 		while(c<column.size()){
@@ -129,32 +143,15 @@ public class test_MySQL {
 		     v++;	
 		}*/
 		
-		List<Node> nodes=neo.getAllNodes(graphDataService);
-		int a=0;
-		/*while(a<nodes.size()){
-			
-			System.out.println(nodes.get(a).getProperty("value").toString());
-			
-			//System.out.println(Node.get(a).getProperty("type").toString());
-			//System.out.println(Node.get(a).getLabels().toString());
-			a++;
-		}*/
-		//System.out.println(nodes.size());
 		
-		//according to the value in a node, find the end node.
-		int e=0;
-		while(e<nodes.size()){
-			if(nodes.get(e).getProperty("value").toString().equals("city")){
-				//System.out.println(nodes.get(e).getProperty("value"));
-				for(Relationship rel:nodes.get(e).getRelationships()){
-					//rel.getEndNode();
-					System.out.print(rel.getProperty("RelationType")+"  ");
-					System.out.println(rel.getEndNode().getProperty("value"));
-				}
-				break;
-			}
-			e++;
-		}
+		
+		//List<Node> nodes=neo.getAllNodes(graphDataService);
+		//System.out.print(nodes.size());
+		
+		
+		
+		
+		
 		
 		
 		//find the shortest path between two nodes
@@ -163,6 +160,10 @@ public class test_MySQL {
 			Iterable<Path> paths = finder.findAllPaths( nodes.get(0), nodes.get(100) );*/
 		
 		
+		
+		//Relationship
+		//relation=first.createRelationshipTo(second, Neo4j.RelTypes.BELONG_TO);
+		//relation.setProperty("relationship-type", "knows");
        
        
       
