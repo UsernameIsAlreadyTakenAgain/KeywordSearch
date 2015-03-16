@@ -17,7 +17,7 @@
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-import-tool-2.2.0-M02.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-io-2.2.0-M02.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-jmx-2.2.0-M02.jar"/>
-	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-kernel-2.2.0-M02.jar"/>
+	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-kernel-2.2.0-M02.jar" sourcepath="/Users/jiechen/.m2/repository/org/neo4j/neo4j-kernel/2.2.0-M02/neo4j-kernel-2.2.0-M02-sources.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-lucene-index-2.2.0-M02.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-primitive-collections-2.2.0-M02.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-shell-2.2.0-M02.jar"/>

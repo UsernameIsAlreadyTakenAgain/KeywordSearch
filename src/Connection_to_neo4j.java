@@ -11,7 +11,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 public class Connection_to_neo4j {
 	
-	static String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/test2";
+	//static String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/test2";
 	Node first;
 	Node second;
 	Relationship relation;
@@ -25,7 +25,7 @@ public class Connection_to_neo4j {
 	void createDatabase(){
 		
 		//GraphDatabaseService
-		graphDataService=new GraphDatabaseFactory().newEmbeddedDatabase(Neo4j_Path);
+		//graphDataService=new GraphDatabaseFactory().newEmbeddedDatabase(Neo4j_Path);
 		
 		//Begin Transaction
 		

@@ -19,6 +19,7 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.index.ReadableIndex;
 import org.neo4j.graphdb.index.UniqueFactory;
+import org.neo4j.kernel.TopLevelTransaction;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 
@@ -48,40 +49,20 @@ public class Neo4j {
 		//transction=graphDataService.beginTx();	
 	}
 	
-	/*public Node createNode(String name,String type,String label){
-		
-		String Key = "value"; 
-		
-		try(Transaction tx = graphDataService.beginTx())
-		{
-		UniqueFactory<Node> factory=new UniqueFactory.UniqueNodeFactory(graphDataService,name) {
-			
-			@Override
-			protected void initialize(Node created, Map<String, Object> properties) {
-				created.setProperty("value", name);
-				created.setProperty("type", type);	
-				Label myLabel = DynamicLabel.label(label);
-				created.addLabel(myLabel);
-			}
-			  //node=factory.getOrCreate( "value", name );
-			  
-		};
-		transction.success();
-	    return factory.getOrCreate( "value", name );
-		}
-		//return factory;
-	}	*/
+	
 	
 		
 	public Relationship createRel(Node first, Node second, String relType,GraphDatabaseService graphDataService){
 		  Relationship relation = null;
-		  try(Transaction transaction = graphDataService.beginTx()){
+		  try(Transaction transaction =  graphDataService.beginTx()){
 			  
 			  ReadableIndex<Node> autoNodeIndex = graphDataService.index().getNodeAutoIndexer().getAutoIndex();
 			  //Node n = autoNodeIndex.get("name", "Neo").getSingle();
 			  //Node a = autoNodeIndex.get("name", "The Architect").getSingle();
+			  
 			  transaction.acquireWriteLock(first);
 			  transaction.acquireWriteLock(second);
+			  
 			  Boolean created = false;
 			  for(Relationship r : first.getRelationships(RelTypes.BELONG_TO)) {
 			    if(r.getOtherNode(first).equals(second)) { // put other conditions here, if needed
@@ -99,71 +80,11 @@ public class Neo4j {
 		  }
 	  }
 	   
-
-	
-	/*public void createNode(String name,String type, String label){
-		//Node result = null;
-		//Iterator<Node> resultIterator = null;
-		ExecutionResult result;
-		
-		try 
-		{
-			graphDataService.schema()
-		            .constraintFor( DynamicLabel.label( label ) )
-		            .assertPropertyIsUnique( name )
-		            .create();
-		   
-			String queryString = "MERGE (n:'"+label+"' {value: {'"+name+"'},type:{'"+type+"'}}) RETURN n";
-		    Map<String, Object> parameters = new HashMap<>();
-		    parameters.put( "value", name );
-		    result = engine.execute( queryString, parameters );
-		    
-		    //result = resultIterator.next();
-		}catch(Exception e){
-			
-		}
-  
-		//return result;
-	 }*/
-	
-	/*public Node createNode( String name, String type,String label)
-    {
-        // START SNIPPET: getOrCreateWithCypher
-        Node result = null;
-        ResourceIterator<Node> resultIterator = null;
-        try ( Transaction tx = graphDataService.beginTx() )
-        {
-            String queryString = "MERGE (n: "+label+" {value:{"+name+"}, type:{"+type+"}}) RETURN n";
-            System.out.println(queryString);
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put( "value", name );
-            parameters.put( "type", type );
-            resultIterator = graphDataService.execute( queryString ).columnAs( "n" );
-            //System.out.println("HTTTT");
-            result = resultIterator.next();
-            tx.success();
-            return result;
-        }
-        // END SNIPPET: getOrCreateWithCypher
-        finally
-        {
-            if ( resultIterator != null )
-            {
-                if ( resultIterator.hasNext() )
-                {
-                    Node other = resultIterator.next();
-                    //noinspection ThrowFromFinallyBlock
-                    throw new IllegalStateException( "Merge returned more than one node: " + result + " and " + other );
-                }
-            }
-        }
-    }*/
-	
+     //create unique node
 	 public Node createUniqueFactory( String name,String type, String label,GraphDatabaseService graphDataService )
 	    {
 	        // START SNIPPET: prepareUniqueFactory
-		
-	        try( Transaction tx = graphDataService.beginTx())
+	        try( Transaction tx =  graphDataService.beginTx())
 	        {
 	        	//indexa=graphDataService.index().forNodes(label);
 	            UniqueFactory<Node> result = new UniqueFactory.UniqueNodeFactory( graphDataService, label )
@@ -174,25 +95,38 @@ public class Neo4j {
 	                {
 	                    created.addLabel( DynamicLabel.label( label ) );
 	                    created.setProperty( "value", properties.get("value") );
-	                    created.setProperty( "type", type );
-	                    
+	                    created.setProperty( "type", type );   
 	                }
 	            };
 	            tx.success();
 	            Node node;
-	            node=result.getOrCreate("value", name);
-	            
-	            
+	            node=result.getOrCreate("value", name); 
 	           // node=result.getOrCreate("type", type);
 	            return node;
 	        }
 	        // END SNIPPET: prepareUniqueFactory
 	    }
+	 
+	 //Create Normal node
+	 public Node createNode(String name, String type, String label,String parent,GraphDatabaseService graphDataService){
+		 try( Transaction tx =  graphDataService.beginTx())
+	        {
+	        	Node node=graphDataService.createNode();
+	        	node.addLabel(DynamicLabel.label( label ));
+	        	node.setProperty("value", name);
+	        	node.setProperty("type", type);
+	        	node.setProperty("parent", parent);
+	        	
+	        	tx.success();
+	            return node;
+	        }
+	        // END SNIPPET: prepareUniqueFactory
+	 }
 
 	    public Node get( String name,  UniqueFactory<Node> factory,GraphDatabaseService graphDataService )
 	    {
 	        // START SNIPPET: getOrCreateWithFactory
-	        try ( Transaction tx = graphDataService.beginTx() )
+	        try ( Transaction tx =  graphDataService.beginTx() )
 	        {
 	            Node node = factory.getOrCreate( "value", name );
 	            //node=factory.getOrCreate("type", type);
@@ -203,11 +137,27 @@ public class Neo4j {
 	        // END SNIPPET: getOrCreateWithFactory
 	    }
 	    
+	    public Node getNode(String name,Label label,String parent,GraphDatabaseService graphDataService ){
+	    	try(Transaction tx =  graphDataService.beginTx()){
+	    		for(Node node :GlobalGraphOperations.at( graphDataService).getAllNodesWithLabel(label) )
+	    		{
+	    			if(node.hasProperty(name) && node.hasProperty(parent))
+	    			{
+	    				System.out.println(node);
+	    				return node;
+	    			}
+	    		}
+	    		tx.success();
+	    		tx.close();
+	    	}
+	    	return null;
+	    }
+	    
 	    //get all the nodes
 	    public List<Node> getAllNodes( GraphDatabaseService graphDb )
 	    {
 	        ArrayList<Node> nodes = new ArrayList<>();
-	        try (Transaction tx = graphDb.beginTx())
+	        try (Transaction tx =  graphDb.beginTx())
 	        {
 	            for ( Node node : GlobalGraphOperations.at( graphDb ).getAllNodes() )
 	            {
@@ -222,7 +172,7 @@ public class Neo4j {
 	    public List<Relationship> getAllRelationships( GraphDatabaseService graphDb )
 	    {
 	        List<Relationship> rels = new ArrayList<>();
-	        try (Transaction tx = graphDb.beginTx())
+	        try (Transaction tx =  graphDb.beginTx())
 	        {
 	            for ( Relationship rel : GlobalGraphOperations.at( graphDb ).getAllRelationships() )
 	            {
@@ -233,6 +183,7 @@ public class Neo4j {
 	        return rels;
 	    }
 	    
+	    //shut down neo4j
 	    void shutDown(GraphDatabaseService graphDb){
 			//shut down graphDataService
 			graphDb.shutdown();

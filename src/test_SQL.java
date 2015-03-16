@@ -6,7 +6,8 @@ public class test_SQL {
 
 	public static void main(String[] args) {
 		Connection_to_MySQL link=new Connection_to_MySQL();
-		link.toMySQL();
+		String db="homework2";
+		link.toMySQL(db);
 		String a="d_name";
 		String b="diseases";
 		

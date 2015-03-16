@@ -8,7 +8,8 @@ import java.sql.SQLException;
 
 public class Connection_to_MySQL {
 	
-	static String host="jdbc:mysql://localhost/homework2?zeroDateTimeBehavior=convertToNull";
+	//static String host="jdbc:mysql://localhost/test1?zeroDateTimeBehavior=convertToNull";
+	
 	static String username="root";
 	static String password="root";
 	static Connection con;
@@ -23,15 +24,21 @@ public class Connection_to_MySQL {
 		}
 	}
 	
-    public static void toMySQL(){
+    public static void toMySQL(String dbname){
     	connection();
     	try {
+    		String host="jdbc:mysql://localhost/"+dbname+"?zeroDateTimeBehavior=convertToNull";
 			con=DriverManager.getConnection(host, username, password);
 			//System.out.print("Worked!");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    	
+    }
+    
+    public static void close() throws SQLException{
+    	con.close();
     }
 
 }
