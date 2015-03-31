@@ -12,7 +12,7 @@
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-cypher-compiler-2.0-2.0.4.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-cypher-compiler-2.1-2.1.6.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-cypher-compiler-2.2-2.2.0-M02.jar"/>
-	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-graph-algo-2.2.0-M02.jar"/>
+	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-graph-algo-2.2.0-M02.jar" sourcepath="/Users/jiechen/.m2/repository/org/neo4j/neo4j-graph-algo/2.2.0-M02/neo4j-graph-algo-2.2.0-M02-sources.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-graph-matching-2.2.0-M02.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-import-tool-2.2.0-M02.jar"/>
 	<classpathentry kind="lib" path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/lib/neo4j-io-2.2.0-M02.jar"/>

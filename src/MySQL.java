@@ -2,6 +2,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.neo4j.graphdb.Node;
@@ -81,6 +82,38 @@ public class MySQL {
 		return values;
 	}
 	
-	
-	
+	public HashSet<FK> getFK(String tableName, String dbName) throws SQLException
+	{
+		String db_tab=dbName+"."+tableName;
+		
+		PreparedStatement statement=link.con.prepareStatement("show create table "+db_tab+";");
+		ResultSet result=statement.executeQuery();
+		String create_table = null;
+		while(result.next()){
+			create_table=result.getString(2);
+		}
+		
+		HashSet<FK> fks=new HashSet<FK>();
+		if(create_table.indexOf("FOREIGN KEY")<0)
+			return null;
+		else
+		{
+			String table=create_table.substring(create_table.indexOf("`")+1, create_table.indexOf("`", create_table.indexOf("`")+1));
+			while(create_table.indexOf("FOREIGN KEY")>=0)
+			{
+				create_table=create_table.substring(create_table.indexOf("FOREIGN KEY"));
+				String column=create_table.substring(create_table.indexOf("`")+1,create_table.indexOf("`", create_table.indexOf("`")+1));
+				create_table=create_table.substring(create_table.indexOf("REFERENCES"));
+				String rtable=create_table.substring(create_table.indexOf("`")+1,create_table.indexOf("`", create_table.indexOf("`")+1));
+				create_table=create_table.substring(create_table.indexOf("("));
+				String rcolumn=create_table.substring(create_table.indexOf("`")+1,create_table.indexOf("`", create_table.indexOf("`")+1));
+				
+				FK fk=new FK(table,column,rtable,rcolumn);
+				fks.add(fk);
+			}
+			return fks;
+		}
+	}	
 }
+
+
