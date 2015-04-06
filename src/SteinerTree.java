@@ -79,57 +79,59 @@ public class SteinerTree {
 						 Map.Entry pair = (Map.Entry)i.next();
 						 nodes.addAll((Set<Node>)pair.getKey());
 						 unsorted.putAll((Map)pair.getValue());
+						 
 					}		
 				}
 			}
 			sorted.putAll(unsorted);
 			
-			//System.out.println(sorted);
+			 Iterator test=sorted.entrySet().iterator();
+				Relationship path;
+				while(test.hasNext()){
+					Map.Entry pair=(Entry) test.next();
+					path=(Relationship) pair.getKey();
+					System.out.println(path.getProperty("RelationType")+"  ");
+				}
+				
+				System.out.println("--------shortestPath");
+			
+			//System.out.println(sorted+"------The result of sorted shortest path");
+			System.out.println(nodes);
+			
 			Kruskal spanningT=new Kruskal();
 			Map<List<Node>, List<Relationship>> links=spanningT.executeKruskal(sorted, nodes, graphDataService);
-			//System.out.println(links);
-			links=constructSteriner(links,all);
-			
+			System.out.println(links+"-------Kruskal");
+			links=constructSteriner(links,all,graphDataService);
+			System.out.println(links+"-------constructSterine");
 			//calculate total cost
 			cost=Cost(links,graphDataService);
+			System.out.println(cost+"================Cost");
 			if(cost<Integer.MAX_VALUE){
 				steinerTree.put(links, cost);
 			}
 			
-			//System.out.println(steinerTree);
+			System.out.println(steinerTree+"======SteinerTree");
 			tx.success();
 			tx.close();
 			return steinerTree;
 		}
 	}
 	
-	public Map<List<Node>, List<Relationship>> constructSteriner(Map<List<Node>, List<Relationship>> links,List<Node> all){
+	public Map<List<Node>, List<Relationship>> constructSteriner(Map<List<Node>, List<Relationship>> links,List<Node> all,GraphDatabaseService graphDataService){
 		//Construct Steiner Tree
 		//Map<List<Node>, List<Relationship>> Steiner=new HashMap<>();
 		//Transaction tx=graphDataService.beginTx();
+		
 		Map<Node, Integer> count= new HashMap<>();
 		Iterator i=links.entrySet().iterator();
-		List<Relationship> edges = null;
+		List<Relationship> edges = new ArrayList<>();
+		List<Node> nodes = new ArrayList<>();
 		while(i.hasNext()){
 			Map.Entry pair=(Map.Entry)i.next();
 			edges=(List<Relationship>) pair.getValue();
-			
-			
-			
-			/*List<Node> edges=(List<Node>) pair.getKey();
-			if(count.containsKey(edges.get(0))){
-				int c=(int) count.get(edges.get(0))+1;
-				count.put(edges.get(0), c);
-			}else{
-				count.put(edges.get(0), 1);
-			}
-			if(count.containsKey(edges.get(1))){
-				int c=(int) count.get(edges.get(1))+1;
-				count.put(edges.get(1), c);
-			}else{
-				count.put(edges.get(1), 1);
-			}*/
+			nodes=(List<Node>) pair.getKey();
 		}
+		
 		for(Relationship r:edges){
 			Node[] n=r.getNodes();
 			int m=0;
@@ -144,40 +146,69 @@ public class SteinerTree {
 			}
 			
 		}
-		//System.out.println(count);
+		System.out.println(count+"-------------Count");
 		//delete some nodes
-		int flag=1;
-		while(flag>0){
-			flag=0;
-			Iterator a=count.entrySet().iterator();
-			while(a.hasNext()){
-				Map.Entry pair=(Entry)a.next();
-				if((int)pair.getValue()==1 && !all.contains(pair.getKey())){
-					Iterator ite=links.entrySet().iterator();
-					while(ite.hasNext()){
-						Map.Entry p=(Map.Entry)ite.next();
-						List<Node> n=(List<Node>) p.getKey();
-						if(n.get(0).equals(pair.getKey())){
-							Node t=n.get(1);
-							links.remove(n);
-							count.remove(pair.getKey());
-							int con=count.get(t)-1;
-							count.put(t, con);
-							break;
+		try(Transaction tx=graphDataService.beginTx()){
+			int flag=1;
+			while(flag>0){
+				flag=0;
+				Iterator a=count.entrySet().iterator();
+				System.out.println(count+"-------------Count---Middle");
+				while(a.hasNext()){
+					Map.Entry pair=(Entry)a.next();
+					if((int)pair.getValue()==1 && !all.contains(pair.getKey())){
+						Iterator ite=links.entrySet().iterator();
+						while(ite.hasNext()){
+							Map.Entry p=(Map.Entry)ite.next();
+							List<Relationship> r=(List<Relationship>) p.getValue();
+							//System.out.println(n+"-------------TESTING");
+							for(Relationship rel:r){
+								Node node1=rel.getStartNode();
+								Node node2=rel.getEndNode();
+								if(node1.equals(pair.getKey())){
+									Node t=node2;
+									//links.remove(node1);
+									//links.remove(node1, rel);
+									nodes.remove(node1);
+									edges.remove(rel);
+									
+									links.clear();
+									links.put(nodes, edges);
+									count.remove(pair.getKey());
+									int con=count.get(t)-1;
+									count.put(t, con);
+									System.out.println(count+"-------------!!!!!!!!!!!!!!Count---process");
+									System.out.println(links+"-------------links---process");
+									break;
+								}
+								if(node2.equals(pair.getKey())){
+									Node t=node1;
+									//links.remove(node2, rel);
+									nodes.remove(node2);
+									edges.remove(rel);
+									
+									links.clear();
+									links.put(nodes, edges);
+                                    
+									count.remove(pair.getKey());
+									int con=count.get(t)-1;
+									count.put(t, con);
+									System.out.println(count+"-------------Count---process");
+									System.out.println(links+"-------------links---process");
+									break;
+								}
+							}
+							
 						}
-						if(n.get(1).equals(pair.getKey())){
-							Node t=n.get(0);
-							links.remove(n);
-							count.remove(pair.getKey());
-							int con=count.get(t)-1;
-							count.put(t, con);
-							break;
-						}
+						flag++;		
+						break;
 					}
-					flag++;		
 				}
 			}
+			tx.success();
 		}
+		
+		System.out.println(count+"-------------Count---After");
 		//tx.success();
 		return links;
 	}
@@ -251,6 +282,7 @@ public class SteinerTree {
 					X=(List<Relationship>) p.getValue();  
 				}
                 Ql.remove(0);
+                
 				A.putAll(T);
 				System.out.println(A+"-------A");
 				Iterator iter=T.entrySet().iterator();

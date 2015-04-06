@@ -25,7 +25,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
 public class test_MySQL {
 
 	public static void main(String[] args) throws Exception {
-	String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/Version3";
+	String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/IHopeThisIsFinal";
   
 
 		GraphDatabaseService graphDataService=new GraphDatabaseFactory().newEmbeddedDatabase(Neo4j_Path);
@@ -37,7 +37,7 @@ public class test_MySQL {
 		//IndexManager index=graphDataService.index();
 		//Index<Node> index=graphDataService.index().forNodes("value");
 		//UniqueFactory<Node> factory = null;
-		String database="homework2";
+		String database="test1";
 		
 		MySQL test=new MySQL(database);
 		
@@ -117,7 +117,7 @@ public class test_MySQL {
 				 neo.createRel(primaryK, foreignK, "PK-FK", graphDataService); 
 				 
 				 //link table
-				 String rel=table+"."+column+"="+rtable+"."+rcolumn;
+				 String rel=database+"."+table+"."+column+"="+database+"."+rtable+"."+rcolumn;
 				 result = engine
 							.execute("MATCH (n) where n.value='"+table+"' and n.parent='"+database+"' RETURN n");
 					Node table1 = null;
@@ -161,7 +161,7 @@ public class test_MySQL {
 					 for(Map<String,Object> tem : result){
 						 table2=(Node) tem.get("n");
 						 }
-			     String rel=db[0]+"."+value+"="+rdb[0]+"."+col.getProperty("value");
+			     String rel=db[1]+"."+db[0]+"."+value+"="+rdb[1]+"."+rdb[0]+"."+col.getProperty("value");
 				 neo.createRel(table1, table2, rel, 2, graphDataService);
 			   }
 		   }

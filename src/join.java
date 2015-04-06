@@ -25,7 +25,7 @@ import org.neo4j.tooling.GlobalGraphOperations;
 public class join {
 	public static void main(String args[]){
 
-		String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/Version3";
+		String Neo4j_Path="/Users/jiechen/Google Drive/Eclipse-Luna/neo4j-community-2.2.0-M02/IHopeThisIsFinal";
 		GraphDatabaseService graphDataService=new GraphDatabaseFactory().newEmbeddedDatabase(Neo4j_Path);
 		Transaction tx=graphDataService.beginTx();
 		
@@ -39,7 +39,9 @@ public class join {
 		ValueComparatorList bvc =  new ValueComparatorList(unsorted);
 		TreeMap<List<String>,Integer> T=new TreeMap<>(bvc);
 		
-		String[] api={"department.test1","store.test1","city.homework2","c_home.test1"};
+		//String[] api={"department.test1","store.test1","city.homework2","c_home.test1"};
+		//String[] api={"department.test1","employee.test1"};
+		String[] api={"test1.city_state","homework2.city","test1.region","test1.address","test1.store"};
 		Set<String> apis=new HashSet<>();  //make sure the unique tables
 		for(int i=0;i<api.length;i++){
 			apis.add(api[i]);
@@ -51,7 +53,7 @@ public class join {
 			String[] temp=tab.split("\\.");
 			//System.out.println(temp+"------table");
 			result = engine
-					.execute("MATCH (n) where n.value='"+temp[0]+"' and n.parent='"+temp[1]+"' RETURN n");
+					.execute("MATCH (n) where n.value='"+temp[1]+"' and n.parent='"+temp[0]+"' RETURN n");
 			Node node = null;
 			 for(Map<String,Object> tem : result){
 				 node=(Node) tem.get("n");
@@ -61,7 +63,7 @@ public class join {
 		}
 		
 		System.out.println(all+"------all");
-		int k=3;
+		int k=7;
 		SteinerTree st=new SteinerTree();
 		Map<Map<List<Node>, List<Relationship>>,Integer> unsort=st.KBestSterinerTree(all,k, graphDataService);
 		//ValueComparatorResult vcr =  new ValueComparatorResult(unsort);

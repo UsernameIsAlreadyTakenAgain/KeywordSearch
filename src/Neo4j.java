@@ -281,9 +281,24 @@ public class Neo4j {
 			t.put(nodes, map);
 	    }
 	    
+	    
+	    Iterator test=t.entrySet().iterator();
+		Set<Node> path=new HashSet<>();
+		while(test.hasNext()){
+			Map.Entry pair=(Entry) test.next();
+			path=(Set<Node>) pair.getKey();
+		}
+		for(Node node:path){
+			System.out.print(node.getProperty("value")+"  ");
+		}
+		System.out.println(t+"--------shortestPath");
+		
+		
+	    
 		tx.success();
 		tx.close();
-		System.out.println(t+"--------shortestPath");
+		
+		
 		return t;
 		
 				
